@@ -18,7 +18,8 @@ function createMixin (lib) {
     lib.inheritMethods(klass, SpeedometerMixin
       ,'initializeSpeedometer'
     );
-    klass.prototype.postInitializationMethodNames.push('initializeSpeedometer')
+    klass.prototype.postInitializationMethodNames = 
+     klass.prototype.postInitializationMethodNames.concat(['initializeSpeedometer'])
   };
 
   SpeedometerMixin.prototype.set_speed = function (val) {
