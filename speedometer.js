@@ -99,6 +99,9 @@ function speedometer (userPref) {
       
       var induCatorNumbPosY = this.defaultProperty.indicatorValuesRadius * Math.cos( 0.01746 * curDeg);
       var induCatorNumbPosX = this.defaultProperty.indicatorValuesRadius * Math.sin( 0.01746 * curDeg);
+
+      //var clickContents = 'onclick="console.log('+curIndVal+')"';
+      var clickContents = 'onclick="jQuery(this).parent().parent().trigger(\'click\','+curIndVal+')"';
       
       if(i%this.defaultProperty.smallDivCount == 0){
         induCatorLinesPosLeft = (this.defaultProperty.edgeRadius - induCatorLinesPosX )-2;
@@ -109,7 +112,7 @@ function speedometer (userPref) {
                   '-o-transform      :rotate('+curDeg+'deg)',
                   '-moz-transform    :rotate('+curDeg+'deg)',
                 ].join(";");
-        tempDiv += '<div class="nob '+dangCls+'" style="left:'+induCatorLinesPosTop+'px;top:'+induCatorLinesPosLeft+'px;'+tempDegInd+'"></div>';
+        tempDiv += '<div class="nob '+dangCls+'" style="left:'+induCatorLinesPosTop+'px;top:'+induCatorLinesPosLeft+'px;'+tempDegInd+'" '+clickContents+'></div>';
         induCatorNumbPosLeft = (this.defaultProperty.edgeRadius - induCatorNumbPosX) - (this.defaultProperty.numbW/2);
         induCatorNumbPosTop  = (this.defaultProperty.edgeRadius - induCatorNumbPosY) - (this.defaultProperty.numbH/2);
         tempDiv += '<div class="numb numb-'+i+' '+dangCls+'" style="left:'+ induCatorNumbPosTop +'px;top:'+induCatorNumbPosLeft+'px;">'+ curIndVal +'</div>';
@@ -122,7 +125,7 @@ function speedometer (userPref) {
                   '-o-transform      :rotate('+curDeg+'deg)',
                   '-moz-transform    :rotate('+curDeg+'deg)',
                 ].join(";");
-        tempDiv += '<div class="nob '+dangCls+' midNob" style="left:'+induCatorLinesPosTop+'px;top:'+induCatorLinesPosLeft+'px;'+tempDegInd+'"></div>';
+        tempDiv += '<div class="nob '+dangCls+' midNob" style="left:'+induCatorLinesPosTop+'px;top:'+induCatorLinesPosLeft+'px;'+tempDegInd+'" '+clickContents+'></div>';
         tempDiv += '<div class="numb"></div>';
       }
     }

@@ -14,27 +14,42 @@ function createMixin (lib) {
 
   function SpeedometerMixin (options) {
     this.speed = (options && 'speed' in options) ? options.speed : 0;
+    this.speedclicker = this.onSpeedNobClicked.bind(this);
   }
   SpeedometerMixin.prototype.destroy = function () {
+    if (this.speedclicker && this.$element) {
+      this.$element.off('click', this.speedclicker);
+    }
+    this.speedclicker = null;
+    this.speed = null;
   };
 
   SpeedometerMixin.prototype.initializeSpeedometer = function () {
     jQuery.fn.speedometer = speedometer;
     this.$element.speedometer(this.getConfigVal('speedometer')||null);
     this.$element.setSpeed(this.speed);
+    this.$element.on('click', this.speedclicker);
   };
 
-  SpeedometerMixin.addMethods = function (klass) {
-    lib.inheritMethods(klass, SpeedometerMixin
-      ,'initializeSpeedometer'
-    );
-    klass.prototype.postInitializationMethodNames = 
-     klass.prototype.postInitializationMethodNames.concat(['initializeSpeedometer'])
+  SpeedometerMixin.prototype.onSpeedNobClicked = function (evnt, speed) {
+    if (lib.isNumber(speed)) {
+      this.set('speed', speed);
+    }
   };
 
   SpeedometerMixin.prototype.set_speed = function (val) {
     this.speed = val;
     this.$element.setSpeed(val);
+  };
+
+  SpeedometerMixin.addMethods = function (klass) {
+    lib.inheritMethods(klass, SpeedometerMixin
+      ,'initializeSpeedometer'
+      ,'onSpeedNobClicked'
+      ,'set_speed'
+    );
+    klass.prototype.postInitializationMethodNames = 
+     klass.prototype.postInitializationMethodNames.concat(['initializeSpeedometer'])
   };
 
   return SpeedometerMixin;
@@ -143,6 +158,9 @@ function speedometer (userPref) {
       
       var induCatorNumbPosY = this.defaultProperty.indicatorValuesRadius * Math.cos( 0.01746 * curDeg);
       var induCatorNumbPosX = this.defaultProperty.indicatorValuesRadius * Math.sin( 0.01746 * curDeg);
+
+      //var clickContents = 'onclick="console.log('+curIndVal+')"';
+      var clickContents = 'onclick="jQuery(this).parent().parent().trigger(\'click\','+curIndVal+')"';
       
       if(i%this.defaultProperty.smallDivCount == 0){
         induCatorLinesPosLeft = (this.defaultProperty.edgeRadius - induCatorLinesPosX )-2;
@@ -153,7 +171,7 @@ function speedometer (userPref) {
                   '-o-transform      :rotate('+curDeg+'deg)',
                   '-moz-transform    :rotate('+curDeg+'deg)',
                 ].join(";");
-        tempDiv += '<div class="nob '+dangCls+'" style="left:'+induCatorLinesPosTop+'px;top:'+induCatorLinesPosLeft+'px;'+tempDegInd+'"></div>';
+        tempDiv += '<div class="nob '+dangCls+'" style="left:'+induCatorLinesPosTop+'px;top:'+induCatorLinesPosLeft+'px;'+tempDegInd+'" '+clickContents+'></div>';
         induCatorNumbPosLeft = (this.defaultProperty.edgeRadius - induCatorNumbPosX) - (this.defaultProperty.numbW/2);
         induCatorNumbPosTop  = (this.defaultProperty.edgeRadius - induCatorNumbPosY) - (this.defaultProperty.numbH/2);
         tempDiv += '<div class="numb numb-'+i+' '+dangCls+'" style="left:'+ induCatorNumbPosTop +'px;top:'+induCatorNumbPosLeft+'px;">'+ curIndVal +'</div>';
@@ -166,7 +184,7 @@ function speedometer (userPref) {
                   '-o-transform      :rotate('+curDeg+'deg)',
                   '-moz-transform    :rotate('+curDeg+'deg)',
                 ].join(";");
-        tempDiv += '<div class="nob '+dangCls+' midNob" style="left:'+induCatorLinesPosTop+'px;top:'+induCatorLinesPosLeft+'px;'+tempDegInd+'"></div>';
+        tempDiv += '<div class="nob '+dangCls+' midNob" style="left:'+induCatorLinesPosTop+'px;top:'+induCatorLinesPosLeft+'px;'+tempDegInd+'" '+clickContents+'></div>';
         tempDiv += '<div class="numb"></div>';
       }
     }
